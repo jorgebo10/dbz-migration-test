@@ -53,6 +53,10 @@ payment-method:
 	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.payment_method --from-beginning --bootstrap-server kafka:9092 --from-beginning
 
 
+customer:
+	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.customer --from-beginning --bootstrap-server kafka:9092 --from-beginning
+
+
 
 # Delete all Docker containers.
 clobber:

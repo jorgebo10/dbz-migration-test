@@ -18,7 +18,7 @@
    snapshot.mode: "when_needed"
    snapshot.new.tables: parallel
    snapshot.locking.mode: "none"
-   snapshot.select.statement.overrides: "inventory.payment_method"
+   snapshot.select.statement.overrides: "inventory.customers"
 
    include.schema.changes: false
 
@@ -42,7 +42,7 @@
    source.struct.version: "v2"
 
    database.include.list: "inventory"
-   table.include.list: "inventory.payment_method"
+   table.include.list: "inventory.customer"
 
    #breaking change. When moving to 2.5 change database.history. to => schema.history. prefix
    schema.history.internal.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
