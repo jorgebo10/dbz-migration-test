@@ -1,0 +1,17 @@
+ARG DBZ_USER_IMAGE_NAME
+ARG DBZ_IMAGE_TAG
+
+FROM $DBZ_USER_IMAGE_NAME:$DBZ_IMAGE_TAG
+
+# Redecleared so that it can be used latedr
+ARG DBZ_IMAGE_TAG
+
+# We define our own Dockerfile_Connect so we are able to easily add custom Plugins to
+# our local Kafka connect installation.
+
+RUN curl -fsSL "https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/$DBZ_IMAGE_TAG/debezium-connector-mysql-$DBZ_IMAGE_TAG-plugin.tar.gz" -o /tmp/mysql-connector.tar.gz && \
+    tar xf /tmp/mysql-connector.tar.gz  -C /kafka/connect/ && \
+    rm /tmp/mysql-connector.tar.gz
+
+# Change back to the Kafka Connect working directory
+WORKDIR /kafka/connect

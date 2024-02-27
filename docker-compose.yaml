@@ -1,0 +1,77 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${CONFLUENT_DOCKER_TAG}
+    hostname: zookeeper
+    container_name: zookeeper
+    healthcheck:
+      test: echo srvr | nc zookeeper ${ZOOKEEPER_PORT} || exit 1
+      retries: 20
+      interval: 10s
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_PORT}
+    ports:
+      - '${ZOOKEEPER_PORT}:${ZOOKEEPER_PORT}'
+
+  kafka:
+    image: confluentinc/cp-enterprise-kafka:${CONFLUENT_DOCKER_TAG}
+    container_name: kafka
+    healthcheck:
+      test: [ "CMD", "/bin/kafka-topics", "--list", "--bootstrap-server=kafka:${KAFKA_PORT}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_PORT}
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:${KAFKA_PORT}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - '${KAFKA_PORT}:${KAFKA_PORT}'
+
+  kafka-connect:
+    image: localbuild/connect:${DBZ_IMAGE_TAG}
+    hostname: kafka-connect
+    platform: linux/amd64
+    container_name: kafka-connect
+    build:
+      context: .
+      dockerfile: Dockerfile_Connect
+      args:
+        DBZ_USER_IMAGE_NAME: ${DBZ_USER_IMAGE_NAME}
+        DBZ_IMAGE_TAG: ${DBZ_IMAGE_TAG}
+    healthcheck:
+      interval: 10s
+      retries: 20
+      test: curl --fail --silent http://kafka-connect:${KAFKA_CONNECT_PORT}/ --output /dev/null || exit 1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      BOOTSTRAP_SERVERS: kafka:${KAFKA_PORT}
+      GROUP_ID: connect-cluster
+      CONFIG_STORAGE_TOPIC: config-storage
+      OFFSET_STORAGE_TOPIC: offset-storage
+      LOG_LEVEL: INFO
+    ports:
+      - ${KAFKA_CONNECT_PORT}:${KAFKA_CONNECT_PORT}
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: debezium
+      MYSQL_USER: mysqluser
+      MYSQL_PASSWORD: mysqlpw
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql:rw
+      - ./mysql-scripts/mysql.conf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      - ./mysql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  mysql-data:
+    driver: local
