@@ -2,7 +2,9 @@ CREATE USER 'replicator' IDENTIFIED BY 'replpass';
 CREATE USER 'debezium' IDENTIFIED BY 'dbz';
 GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'replicator';
 GRANT SELECT, RELOAD, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT  ON *.* TO 'debezium';
+#Altering plugging for local test https://stackoverflow.com/questions/50379839/connection-java-mysql-public-key-retrieval-is-not-allowed
 ALTER USER 'debezium'@'%' IDENTIFIED WITH mysql_native_password BY 'dbz';
+
 
 # Create the database that we'll use to populate data and watch the effect in the binlog
 CREATE DATABASE inventory;

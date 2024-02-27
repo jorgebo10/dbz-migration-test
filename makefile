@@ -50,11 +50,12 @@ schema-changes:
 	docker exec -it kafka kafka-console-consumer --topic schema-changes.inventory --from-beginning --bootstrap-server localhost:9092 --from-beginning
 
 payment-method:
-	docker exec -it kafka kafka-console-consumer --topic inventory.inventory.payment_method --from-beginning --bootstrap-server kafka:9092 --from-beginning
+	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.payment_method --from-beginning --bootstrap-server kafka:9092 --from-beginning
 
 
 
 # Delete all Docker containers.
 clobber:
 	docker-compose down
+	$(shell docker volume ls  | docker volume rm)
 	docker-compose rm

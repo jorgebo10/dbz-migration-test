@@ -1,20 +1,50 @@
 
- name: inventory-connector-pp
+ name: test
  config:
-  connector.class: io.debezium.connector.mysql.MySqlConnector
-  tasks.max: 1
-  database.hostname: mysql
-  database.port: 3306
-  database.user: debezium
-  database.password: dbz
-  database.server.id: 100000
-  topic.prefix: inventory
-  database.include.list: inventory
-  schema.history.internal.kafka.bootstrap.servers: kafka:9092
-  schema.history.internal.kafka.topic: schema-changes.inventory
-  table.include.list: inventory.payment_method
-  snapshot.mode: when_needed
-  snapshot.locking.mode: none
-  heartbeat.interval.ms: 5000
+   connector.class: io.debezium.connector.mysql.MySqlConnector
+   restartOnFailure: true
+   database.hostname: mysql
+   database.user: debezium
+   database.password: dbz
 
+   #breaking change. When movint to 2.5 change to => topic.prefix
+   topic.prefix: "kafka-connect-automation.cloudcomms"
+   database.server.id: 100000
+   heartbeat.interval.ms: 5000
+   offset.flush.timeout.ms: 30000
+   producer.buffer.memory: 1048576
+   producer.override.batch.size: 819200
 
+   snapshot.mode: "when_needed"
+   snapshot.new.tables: parallel
+   snapshot.locking.mode: "none"
+   snapshot.select.statement.overrides: "inventory.payment_method"
+
+   include.schema.changes: false
+
+   errors.tolerance: none
+   errors.log.enable: true
+   errors.log.include.messages: true
+   #Mysql 8.0 has changed auth plugging and this allows to skip cert. config
+   #https://stackoverflow.com/questions/50379839/connection-java-mysql-public-key-retrieval-is-not-allowed
+   database.allowPublicKeyRetrieval: true
+
+   event.processing.failure.handling.mode: "warn"
+
+   key.converter: org.apache.kafka.connect.json.JsonConverter
+   key.converter.schemas.enable: true
+
+   value.converter: org.apache.kafka.connect.json.JsonConverter
+   value.converter.schemas.enable: true
+
+   decimal.handling.mode: "double"
+   tombstones.on.delete: "false"
+   source.struct.version: "v2"
+
+   database.include.list: "inventory"
+   table.include.list: "inventory.payment_method"
+
+   #breaking change. When moving to 2.5 change database.history. to => schema.history. prefix
+   schema.history.internal.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
+   schema.history.internal.kafka.bootstrap.servers: "kafka:9092"
+   schema.history.internal.skip.unparseable.ddl: false
