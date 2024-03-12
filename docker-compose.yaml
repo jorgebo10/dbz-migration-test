@@ -69,9 +69,6 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - mysql-data:/var/lib/mysql:rw
-      - ./mysql-scripts/mysql.conf:/etc/mysql/mysql.conf.d/mysqld.cnf
-      - ./mysql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-volumes:
-  mysql-data:
-    driver: local
+      - ./mysql-data:/var/lib/mysql:rw
+      - ./mysql.conf/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql.conf/init.sql:/docker-entrypoint-initdb.d/init.sql:ro

@@ -1,5 +1,5 @@
 
- name: test
+ name: test-2
  config:
    connector.class: io.debezium.connector.mysql.MySqlConnector
    restartOnFailure: true
@@ -18,7 +18,6 @@
    snapshot.mode: "when_needed"
    snapshot.new.tables: parallel
    snapshot.locking.mode: "none"
-   snapshot.select.statement.overrides: "inventory.customers"
 
    include.schema.changes: false
 
@@ -42,7 +41,7 @@
    source.struct.version: "v2"
 
    database.include.list: "inventory"
-   table.include.list: "inventory.customer"
+   table.include.list: "inventory.sales_order_item"
 
    #breaking change. When moving to 2.5 change database.history. to => schema.history. prefix
    schema.history.internal.kafka.topic: "kafka-connect-automation.cloudcomms.__history"

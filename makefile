@@ -38,25 +38,43 @@ connect-logs:
 	docker-compose logs -f kafka-connect
 
 mysql:
-	docker exec -it mysql mysql -u mysqluser -p inventory
+	docker exec -it mysql mysql -u root -p inventory
 
 topics:
 	docker exec -it kafka kafka-topics --bootstrap-server localhost:9092 --list
 
+offset-storage:
+	docker exec -it kafka kafka-console-consumer --topic offset-storage --bootstrap-server localhost:9092 --from-beginning
+
+status-storage:
+	docker exec -it kafka kafka-console-consumer --topic status-storage --bootstrap-server localhost:9092 --from-beginning
+
+config-storage:
+	docker exec -it kafka kafka-console-consumer --topic config-storage --bootstrap-server localhost:9092 --from-beginning
+
 history:
-	docker exec -it kafka kafka-console-consumer --topic inventory --from-beginning --bootstrap-server localhost:9092 --from-beginning
+	docker exec -it kafka kafka-console-consumer --topic inventory --from-beginning --bootstrap-server localhost:9092
 
 schema-changes:
-	docker exec -it kafka kafka-console-consumer --topic schema-changes.inventory --from-beginning --bootstrap-server localhost:9092 --from-beginning
+	docker exec -it kafka kafka-console-consumer --topic schema-changes.inventory --from-beginning --bootstrap-server localhost:9092
 
-payment-method:
-	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.payment_method --from-beginning --bootstrap-server kafka:9092 --from-beginning
+payment_method:
+	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.payment_method --from-beginning --bootstrap-server kafka:9092
 
+
+sales_order_item:
+	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.sales_order_item --from-beginning --bootstrap-server kafka:9092
 
 customer:
-	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.customer --from-beginning --bootstrap-server kafka:9092 --from-beginning
+	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.customer --from-beginning --bootstrap-server kafka:9092
 
+kafka_books:
+	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.kafka_books --from-beginning --bootstrap-server kafka:9092
 
+create:
+	docker exec -it kafka kafka-topics --create --topic kafka-connect-automation.cloudcomms.__historyback  --bootstrap-server kafka:9092
+
+	kafka-connect-automation.cloudcomms.__history-back
 
 # Delete all Docker containers.
 clobber:
