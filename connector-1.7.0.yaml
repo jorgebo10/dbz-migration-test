@@ -1,5 +1,5 @@
 
-name: test
+name: test-1.7.0.Final
 config:
   connector.class: io.debezium.connector.mysql.MySqlConnector
   restartOnFailure: true
@@ -8,9 +8,9 @@ config:
   database.password: dbz
 
   #breaking change. When moving to 2.5 change database.server.name to => topic.prefix
-  topic.prefix: "kafka-connect-automation.cloudcomms"
-  #database.server.name: "kafka-connect-automation.cloudcomms"
-  database.server.id: 100000
+  #topic.prefix: "kafka-connect-automation.cloudcomms"
+  database.server.name: "kafka-connect-automation.cloudcomms"
+  #database.server.id: 100000
   heartbeat.interval.ms: 5000
   offset.flush.timeout.ms: 30000
   #producer.buffer.memory: 1048576
@@ -45,13 +45,13 @@ config:
   table.include.list: "inventory.sales_order_item, inventory.tasks"
 
   #breaking change. When moving to 2.5 change database.history. to => schema.history. prefix
-  schema.history.internal.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
-  schema.history.internal.kafka.bootstrap.servers: "kafka:9092"
-  schema.history.internal.skip.unparseable.ddl: false
+  #schema.history.internal.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
+  #schema.history.internal.kafka.bootstrap.servers: "kafka:9092"
+  #schema.history.internal.skip.unparseable.ddl: false
 
-  #database.history.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
-  #database.history.kafka.bootstrap.servers: "kafka:9092"
-  #database.history.skip.unparseable.ddl: false
+  database.history.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
+  database.history.kafka.bootstrap.servers: "kafka:9092"
+  database.history.skip.unparseable.ddl: false
 
   topic.creation.enable: true
   topic.creation.default.replication.factor: 1
@@ -59,5 +59,3 @@ config:
   topic.creation.default.cleanup.policy: delete #Documentation suggests setting this property NEVER to compact
   topic.creation.default.compression.type: lz4
   topic.creation.default.retention.ms: 7776000000 # almost 3 months
-
-
