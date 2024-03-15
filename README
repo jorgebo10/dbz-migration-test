@@ -1,0 +1,44 @@
+A) Install 1.7.0 Kafka-connect
+    1) `make clobber` to remove every docker resource
+    2) Set DBZ_IMAGE_TAG=1.7.0.Final in .env files
+    3) Copy connector-1.7.0.yaml to connector.yaml to have a working connector
+    4) `make start` to start the infra.
+     - Mysql 8.0.35  with variables
+        'character_set_client', 'utf8mb4'
+        'character_set_connection', 'utf8mb4'
+        'character_set_database', 'utf8mb4'
+        'character_set_filesystem', 'binary'
+        'character_set_results', 'utf8mb4'
+        'character_set_server', 'utf8mb4'
+        'character_set_system', 'utf8mb3'
+        'character_sets_dir', '/usr/share/mysql-8.0/charsets/'
+     - Kafka connect 1.7.0.Final with debezium connector
+     - You can check other kafka and zookeeper conf in docker-compose file
+     5) `make connector-install` to install the connector.
+
+B) Migrate to 2.5.0.Final
+     1) Set DBZ_IMAGE_TAG=2.5.0.Final in .env files
+     2) Copy connector-2.x.yaml to connector.yaml to have a working connector with 2.x version changes
+     3) `make start` to start the infra.
+         - Mysql 8.0.35  with variables
+            'character_set_client', 'utf8mb4'
+            'character_set_connection', 'utf8mb4'
+            'character_set_database', 'utf8mb4'
+            'character_set_filesystem', 'binary'
+            'character_set_results', 'utf8mb4'
+            'character_set_server', 'utf8mb4'
+            'character_set_system', 'utf8mb3'
+            'character_sets_dir', '/usr/share/mysql-8.0/charsets/'
+         - Kafka connect 2.5.0.Final with debezium connector
+         - You can check other kafka and zookeeper conf in docker-compose file
+     4) `make update-kafka-connect` to update kafka-connect cluster to version 2.5.0.Final
+     5) `make connector-install` to install the connector.
+     6) `make mysql` to enter mysql
+     7) Copy some inserts from init.sql file and change the id_sales_order so that it not complains
+     8) See JDBC Type 1 error in logs
+
+C) How to fix it:
+     1) Before B), run `ALTER TABLE sales_order_item CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;`
+     2) Continue with B.
+     3) In 8 you will see no errors
+

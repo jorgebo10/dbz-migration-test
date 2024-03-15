@@ -1,5 +1,5 @@
 
-name: test-1.7.0.Final
+name: test
 config:
   connector.class: io.debezium.connector.mysql.MySqlConnector
   restartOnFailure: true
