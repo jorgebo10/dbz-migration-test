@@ -38,7 +38,7 @@ connect-logs:
 	docker-compose logs -f kafka-connect
 
 mysql:
-	docker exec -it mysql mysql -u root -p inventory
+	docker exec -it mysql mysql -u root -p inventory  #pw debezium
 
 topics:
 	docker exec -it kafka kafka-topics --bootstrap-server localhost:9092 --list
@@ -74,12 +74,6 @@ customer:
 
 kafka_books:
 	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.kafka_books --from-beginning --bootstrap-server kafka:9092
-
-create:
-	docker exec -it kafka kafka-topics --create --topic kafka-connect-automation.cloudcomms.__history-new --replication-factor 1 --partitions 1 --bootstrap-server kafka:9092
-
-delete:
-	docker exec -it kafka kafka-topics --delete --topic kafka-connect-automation.cloudcomms.__history-new --bootstrap-server kafka:9092
 
 # Delete all Docker containers.
 clobber:
