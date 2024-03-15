@@ -74,6 +74,8 @@ customer:
 
 kafka_books:
 	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.kafka_books --from-beginning --bootstrap-server kafka:9092
+update-kafka-connect:
+	docker-compose up -d --no-deps --build kafka-connect
 
 # Delete all Docker containers.
 clobber:
