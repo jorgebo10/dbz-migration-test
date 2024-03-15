@@ -54,12 +54,13 @@ services:
       GROUP_ID: connect-cluster
       CONFIG_STORAGE_TOPIC: config-storage
       OFFSET_STORAGE_TOPIC: offset-storage
+      STATUS_STORAGE_TOPIC: status-storage
       LOG_LEVEL: INFO
     ports:
       - ${KAFKA_CONNECT_PORT}:${KAFKA_CONNECT_PORT}
 
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0.35
     container_name: mysql
     restart: always
     environment:
@@ -69,6 +70,6 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - ./mysql-data:/var/lib/mysql:rw
+     # - ./mysql-data:/var/lib/mysql:rw
       - ./mysql.conf/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./mysql.conf/init.sql:/docker-entrypoint-initdb.d/init.sql:ro

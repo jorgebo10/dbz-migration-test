@@ -53,7 +53,11 @@ config-storage:
 	docker exec -it kafka kafka-console-consumer --topic config-storage --bootstrap-server localhost:9092 --from-beginning
 
 history:
-	docker exec -it kafka kafka-console-consumer --topic inventory --from-beginning --bootstrap-server localhost:9092
+	docker exec -it kafka kafka-console-consumer --topic  kafka-connect-automation.cloudcomms.__history --from-beginning --bootstrap-server localhost:9092
+
+
+history_describe:
+	docker exec -it kafka kafka-topics --describe --topic  kafka-connect-automation.cloudcomms.__history --bootstrap-server localhost:9092
 
 schema-changes:
 	docker exec -it kafka kafka-console-consumer --topic schema-changes.inventory --from-beginning --bootstrap-server localhost:9092
@@ -72,9 +76,10 @@ kafka_books:
 	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.kafka_books --from-beginning --bootstrap-server kafka:9092
 
 create:
-	docker exec -it kafka kafka-topics --create --topic kafka-connect-automation.cloudcomms.__historyback  --bootstrap-server kafka:9092
+	docker exec -it kafka kafka-topics --create --topic kafka-connect-automation.cloudcomms.__history-new --replication-factor 1 --partitions 1 --bootstrap-server kafka:9092
 
-	kafka-connect-automation.cloudcomms.__history-back
+delete:
+	docker exec -it kafka kafka-topics --delete --topic kafka-connect-automation.cloudcomms.__history-new --bootstrap-server kafka:9092
 
 # Delete all Docker containers.
 clobber:
