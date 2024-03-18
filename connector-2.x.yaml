@@ -32,10 +32,10 @@
    event.processing.failure.handling.mode: "warn"
 
    key.converter: org.apache.kafka.connect.json.JsonConverter
-   key.converter.schemas.enable: true
+   key.converter.schemas.enable: false
 
    value.converter: org.apache.kafka.connect.json.JsonConverter
-   value.converter.schemas.enable: true
+   value.converter.schemas.enable: false
 
    decimal.handling.mode: "double"
    tombstones.on.delete: "false"
@@ -46,7 +46,7 @@
 
    #breaking change. When moving to 2.5 change database.history. to => schema.history. prefix
    schema.history.internal.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
-   schema.history.internal.kafka.bootstrap.servers: "kafka:9092"
+   schema.history.internal.kafka.bootstrap.servers: "kafka:10092"
    schema.history.internal.skip.unparseable.ddl: false
 
    #database.history.kafka.topic: "kafka-connect-automation.cloudcomms.__history"

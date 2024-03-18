@@ -32,10 +32,10 @@ config:
   event.processing.failure.handling.mode: "warn"
 
   key.converter: org.apache.kafka.connect.json.JsonConverter
-  key.converter.schemas.enable: true
+  key.converter.schemas.enable: false
 
   value.converter: org.apache.kafka.connect.json.JsonConverter
-  value.converter.schemas.enable: true
+  value.converter.schemas.enable: false
 
   decimal.handling.mode: "double"
   tombstones.on.delete: "false"
@@ -50,7 +50,7 @@ config:
   #schema.history.internal.skip.unparseable.ddl: false
 
   database.history.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
-  database.history.kafka.bootstrap.servers: "kafka:9092"
+  database.history.kafka.bootstrap.servers: "kafka:10092"
   database.history.skip.unparseable.ddl: false
 
   topic.creation.enable: true
