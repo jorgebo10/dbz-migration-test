@@ -44,20 +44,35 @@ topics:
 	docker exec -it kafka kafka-topics --bootstrap-server localhost:9092 --list
 
 offset-storage:
-	docker exec -it kafka kafka-console-consumer --topic offset-storage --bootstrap-server localhost:9092 --from-beginning
+	docker exec -it kafka kafka-console-consumer --topic offset-storage --bootstrap-server localhost:9092 --from-beginning \
+    --property print.headers=true --property print.key=true
+
 
 status-storage:
-	docker exec -it kafka kafka-console-consumer --topic status-storage --bootstrap-server localhost:9092 --from-beginning
+	docker exec -it kafka kafka-console-consumer --topic status-storage --bootstrap-server localhost:9092 --from-beginning \
+    --property print.headers=true --property print.key=true
+
 
 config-storage:
-	docker exec -it kafka kafka-console-consumer --topic config-storage --bootstrap-server localhost:9092 --from-beginning
+	docker exec -it kafka kafka-console-consumer --topic config-storage --bootstrap-server localhost:9092 --from-beginning \
+    --property print.headers=true --property print.key=true
 
-history:
-	docker exec -it kafka kafka-console-consumer --topic  kafka-connect-automation.cloudcomms.__history --from-beginning --bootstrap-server localhost:9092
+database-changes:
+	docker exec -it kafka kafka-console-consumer --topic  kafka-connect-automation.cloudcomms \
+	--from-beginning --bootstrap-server localhost:9092  --property print.headers=true --property print.key=true
 
 
-history_describe:
-	docker exec -it kafka kafka-topics --describe --topic  kafka-connect-automation.cloudcomms.__history --bootstrap-server localhost:9092
+database-schema-history:
+	docker exec -it kafka kafka-topics --describe --topic  kafka-connect-automation.cloudcomms.__history \
+	--bootstrap-server localhost:9092 --property print.headers=true --property print.key=true
+
+schema-changes:
+	docker exec -it kafka kafka-console-consumer --topic schema-changes.inventory --from-beginning \
+	--bootstrap-server localhost:9092 --property print.headers=true --property print.key=true
+
+heartbeat:
+	docker exec -it kafka kafka-console-consumer --topic heartbeat.kafka-connect-automation.cloudcomms --from-beginning \
+	--bootstrap-server localhost:9092 --property print.headers=true --property print.key=true
 
 schema-changes:
 	docker exec -it kafka kafka-console-consumer --topic schema-changes.inventory --from-beginning --bootstrap-server localhost:9092

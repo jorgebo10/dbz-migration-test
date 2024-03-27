@@ -1,63 +1,63 @@
+name: test
+config:
+  connector.class: io.debezium.connector.mysql.MySqlConnector
+  restartOnFailure: true
+  database.hostname: mysql
+  database.user: debezium
+  database.password: dbz
 
- name: test
- config:
-   connector.class: io.debezium.connector.mysql.MySqlConnector
-   restartOnFailure: true
-   database.hostname: mysql
-   database.user: debezium
-   database.password: dbz
+  #breaking change. When moving to 2.5 change database.server.name to => topic.prefix
+  topic.prefix: "kafka-connect-automation.cloudcomms"
+  #database.server.name: "kafka-connect-automation.cloudcomms"
+  database.server.id: 100000
+  heartbeat.interval.ms: 5000
+  topic.heartbeat.prefix: "heartbeat"
+  offset.flush.timeout.ms: 30000
+  #producer.buffer.memory: 1048576
+  #producer.override.batch.size: 819200
 
-    #breaking change. When moving to 2.5 change database.server.name to => topic.prefix
-   topic.prefix: "kafka-connect-automation.cloudcomms"
-   #database.server.name: "kafka-connect-automation.cloudcomms"
-   database.server.id: 100000
-   heartbeat.interval.ms: 5000
-   offset.flush.timeout.ms: 30000
-   #producer.buffer.memory: 1048576
-   #producer.override.batch.size: 819200
+  snapshot.mode: "when_needed"
+  snapshot.new.tables: parallel
+  snapshot.locking.mode: "none"
 
-   snapshot.mode: "when_needed"
-   snapshot.new.tables: parallel
-   snapshot.locking.mode: "none"
+  include.schema.changes: false
 
-   include.schema.changes: false
+  errors.tolerance: none
+  errors.log.enable: true
+  errors.log.include.messages: true
+  #Mysql 8.0 has changed auth plugging and this allows to skip cert. config
+  #https://stackoverflow.com/questions/50379839/connection-java-mysql-public-key-retrieval-is-not-allowed
+  database.allowPublicKeyRetrieval: true
 
-   errors.tolerance: none
-   errors.log.enable: true
-   errors.log.include.messages: true
-   #Mysql 8.0 has changed auth plugging and this allows to skip cert. config
-   #https://stackoverflow.com/questions/50379839/connection-java-mysql-public-key-retrieval-is-not-allowed
-   database.allowPublicKeyRetrieval: true
+  event.processing.failure.handling.mode: "warn"
 
-   event.processing.failure.handling.mode: "warn"
+  key.converter: org.apache.kafka.connect.json.JsonConverter
+  key.converter.schemas.enable: false
 
-   key.converter: org.apache.kafka.connect.json.JsonConverter
-   key.converter.schemas.enable: false
+  value.converter: org.apache.kafka.connect.json.JsonConverter
+  value.converter.schemas.enable: false
 
-   value.converter: org.apache.kafka.connect.json.JsonConverter
-   value.converter.schemas.enable: false
+  decimal.handling.mode: "double"
+  tombstones.on.delete: "false"
+  source.struct.version: "v2"
 
-   decimal.handling.mode: "double"
-   tombstones.on.delete: "false"
-   source.struct.version: "v2"
+  database.include.list: "inventory"
+  table.include.list: "inventory.sales_order_item, inventory.tasks"
 
-   database.include.list: "inventory"
-   table.include.list: "inventory.sales_order_item, inventory.tasks"
+  #breaking change. When moving to 2.5 change database.history. to => schema.history. prefix
+  schema.history.internal.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
+  schema.history.internal.kafka.bootstrap.servers: "kafka:10092"
+  schema.history.internal.skip.unparseable.ddl: false
 
-   #breaking change. When moving to 2.5 change database.history. to => schema.history. prefix
-   schema.history.internal.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
-   schema.history.internal.kafka.bootstrap.servers: "kafka:10092"
-   schema.history.internal.skip.unparseable.ddl: false
+  #database.history.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
+  #database.history.kafka.bootstrap.servers: "kafka:9092"
+  #database.history.skip.unparseable.ddl: false
 
-   #database.history.kafka.topic: "kafka-connect-automation.cloudcomms.__history"
-   #database.history.kafka.bootstrap.servers: "kafka:9092"
-   #database.history.skip.unparseable.ddl: false
-
-   topic.creation.enable: true
-   topic.creation.default.replication.factor: 1
-   topic.creation.default.partitions: 1
-   topic.creation.default.cleanup.policy: delete #Documentation suggests setting this property NEVER to compact
-   topic.creation.default.compression.type: lz4
-   topic.creation.default.retention.ms: 7776000000 # almost 3 months
+  topic.creation.enable: true
+  topic.creation.default.replication.factor: 1
+  topic.creation.default.partitions: 1
+  topic.creation.default.cleanup.policy: delete #Documentation suggests setting this property NEVER to compact
+  topic.creation.default.compression.type: lz4
+  topic.creation.default.retention.ms: 7776000000 # almost 3 months
 
 
