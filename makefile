@@ -1,18 +1,18 @@
-PHONY: start status install check-dependencies stop clobber
+PHONY: start status connector-install check-dependencies stop clobber
 
 # Start all dependencies as local Docker containers using docker-compose.
 start:
-	docker-compose up -d --build
+	docker-compose up -d
 
 # Show the status of all running Docker containers
 status:
 	docker-compose ps
 
-# Install the Debezium connector specified in your connector.yaml.
+# Install the Debezium connector specified in your connector.json.
 # If we already got a connector installed, it will be deleted first.
-connector-install: connector.yaml check-dependencies
-	http --quiet DELETE "localhost:8083/connectors/$$(yaml2json connector.yaml | jq -r .name)"
-	yaml2json connector.yaml | http --headers --check-status POST :8083/connectors
+connector-install:
+	http --quiet DELETE "localhost:8083/connectors/inventory-connector"
+	curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @connector.json
 
 plugins-list: check-dependencies
 	http GET "localhost:8083/connector-plugins"
@@ -41,19 +41,31 @@ mysql:
 	docker exec -it mysql mysql -u root -p inventory  #pw debezium
 
 topics:
-	docker exec -it kafka kafka-topics --bootstrap-server localhost:9092 --list
+	docker exec -it kafka /kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list
 
 offset-storage:
-	docker exec -it kafka kafka-console-consumer --topic offset-storage --bootstrap-server localhost:9092 --from-beginning
+	docker exec -it kafka /kafka/bin/kafka-console-consumer.sh --topic my_offset_configs --bootstrap-server kafka:9092 --from-beginning
 
 status-storage:
-	docker exec -it kafka kafka-console-consumer --topic status-storage --bootstrap-server localhost:9092 --from-beginning
+	docker exec -it kafka  /kafka/bin/kafka-console-consumer.sh --topic my_status_configs --bootstrap-server kafka:9092 --from-beginning
 
 config-storage:
-	docker exec -it kafka kafka-console-consumer --topic config-storage --bootstrap-server localhost:9092 --from-beginning
+	docker exec -it kafka  /kafka/bin/kafka-console-consumer.sh --topic my_connect_configs --bootstrap-server kafka:9092 --from-beginning
+
+describe-history:
+	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
+		 --bootstrap-server kafka:9092 \
+		 --describe \
+		 --topic schema-changes.inventory
+
+describe-inventory-customers:
+	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
+		 --bootstrap-server kafka:9092 \
+		 --describe \
+		 --topic dbserver1.inventory.customers
 
 history:
-	docker exec -it kafka kafka-console-consumer --topic  kafka-connect-automation.cloudcomms.__history --from-beginning --bootstrap-server localhost:9092
+	docker exec -it kafka  /kafka/bin/kafka-console-consumer.sh --topic  kafka-connect-automation.cloudcomms.__history --from-beginning --bootstrap-server localhost:9092
 
 
 history_describe:
