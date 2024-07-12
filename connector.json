@@ -17,7 +17,6 @@
     "topic.creation.enable": "true",
     "topic.heartbeat.prefix": "__debezium-hearbeat",
     "heartbeat.interval.ms": 5000
-
   }
 }
 

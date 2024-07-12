@@ -1,5 +1,8 @@
 PHONY: start status connector-install check-dependencies stop clobber
 
+# "topic.creation.default.partitions": 2 affects those topics prefixed with "topic.prefix".
+# history topic is always 1 partition, probably taken from broker config
+
 # Start all dependencies as local Docker containers using docker-compose.
 start:
 	docker-compose up -d
@@ -56,7 +59,7 @@ describe-history:
 	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
 		 --bootstrap-server kafka:9092 \
 		 --describe \
-		 --topic schema-changes.inventory
+		 --topic dbserver1.schema-changes.inventory
 
 describe-inventory-customers:
 	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
@@ -64,30 +67,11 @@ describe-inventory-customers:
 		 --describe \
 		 --topic dbserver1.inventory.customers
 
-history:
-	docker exec -it kafka  /kafka/bin/kafka-console-consumer.sh --topic  kafka-connect-automation.cloudcomms.__history --from-beginning --bootstrap-server localhost:9092
-
-
-history_describe:
-	docker exec -it kafka kafka-topics --describe --topic  kafka-connect-automation.cloudcomms.__history --bootstrap-server localhost:9092
-
-schema-changes:
-	docker exec -it kafka kafka-console-consumer --topic schema-changes.inventory --from-beginning --bootstrap-server localhost:9092
-
-payment_method:
-	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.payment_method --from-beginning --bootstrap-server kafka:9092
-
-
-sales_order_item:
-	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.sales_order_item --from-beginning --bootstrap-server kafka:9092
-
-customer:
-	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.customer --from-beginning --bootstrap-server kafka:9092
-
-kafka_books:
-	docker exec -it kafka kafka-console-consumer --topic kafka-connect-automation.cloudcomms.inventory.kafka_books --from-beginning --bootstrap-server kafka:9092
-update-kafka-connect:
-	docker-compose up -d --no-deps --build kafka-connect
+describe-heartbeat:
+	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
+		 --bootstrap-server kafka:9092 \
+		 --describe \
+		 --topic __debezium-hearbeat.dbserver1
 
 # Delete all Docker containers.
 clobber:
