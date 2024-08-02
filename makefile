@@ -1,4 +1,4 @@
-PHONY: start status connector-install check-dependencies stop clobber
+PHONY: start status connector-mysql-install connector-postgres-install stop clobber
 
 # "topic.creation.default.partitions": 2 affects those topics prefixed with "topic.prefix".
 # history topic is always 1 partition, probably taken from broker config
@@ -11,20 +11,19 @@ start:
 status:
 	docker-compose ps
 
-# Install the Debezium connector specified in your connector.json.
+# Install the Debezium connector specified in your mysql-connector.json.
 # If we already got a connector installed, it will be deleted first.
-connector-install:
-	http --quiet DELETE "localhost:8083/connectors/inventory-connector"
-	curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @connector.json
+connector-mysql-install:
+	http --quiet DELETE "localhost:8083/connectors/inventory-mysql-connector"
+	curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @mysql-connector.json
 
-plugins-list: check-dependencies
+connector-postgres-install:
+	http --quiet DELETE "localhost:8083/connectors/inventory-postgres-connector"
+	curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @postgres-connector.json
+
+plugins-list:
 	http GET "localhost:8083/connector-plugins"
 
-connector-get:
-	http GET "localhost:8083/connectors/$$(yaml2json connector.yaml | jq -r .name)"
-
-connector.yaml:
-	@echo >&2 "ERROR: missing $@. Please manually copy one of the connector_example*.yaml files"; exit 1
 
 # Check we have all CLI applications installed.
 check-dependencies:
@@ -38,7 +37,7 @@ stop:
 	docker-compose stop
 
 connect-logs:
-	docker-compose logs -f kafka-connect
+	docker-compose logs -f connect
 
 mysql:
 	docker exec -it mysql mysql -u root -p inventory  #pw debezium
@@ -61,17 +60,31 @@ describe-history:
 		 --describe \
 		 --topic dbserver1.schema-changes.inventory
 
-describe-inventory-customers:
+describe-customers:
 	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
 		 --bootstrap-server kafka:9092 \
 		 --describe \
 		 --topic dbserver1.inventory.customers
+
+
+delete-customers:
+	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
+		 --bootstrap-server kafka:9092 \
+		 --delete \
+		 --topic my_prefix.inventory.customers
 
 describe-heartbeat:
 	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
 		 --bootstrap-server kafka:9092 \
 		 --describe \
 		 --topic __debezium-hearbeat.dbserver1
+
+consume-customers:
+	docker exec -it kafka  /kafka/bin/kafka-console-consumer.sh \
+		 --bootstrap-server kafka:9092 \
+		 --from-beginning \
+		 --topic my_prefix.inventory.customers
+
 
 # Delete all Docker containers.
 clobber:
