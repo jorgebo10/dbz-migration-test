@@ -1,0 +1,63 @@
+services:
+  zookeeper:
+    image: quay.io/debezium/zookeeper:2.0
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+
+  kafka:
+    image: quay.io/debezium/kafka:2.0
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - 9092:9092
+    links:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+
+  mysql:
+    image: quay.io/debezium/example-mysql:2.0
+    hostname: mysql
+    container_name: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: debezium
+      MYSQL_USER: mysqluser
+      MYSQL_PASSWORD: mysqlpw
+
+  postgres:
+    image: quay.io/debezium/example-postgres:2.7.0.Final
+    hostname: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+
+  connect:
+    image: quay.io/debezium/connect:2.7.0.Final
+    hostname: connect
+    container_name: connect
+    ports:
+      - 8083:8083
+    links:
+      - kafka
+      - mysql
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1 # group id of kafka connect cluster
+      CONFIG_STORAGE_TOPIC: my_connect_configs # store connector configurations.
+      OFFSET_STORAGE_TOPIC: my_connect_offsets # store connector offsets.
+      STATUS_STORAGE_TOPIC: my_connect_statuses # store connector status.
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"  # Disable auto topic creation
+      KAFKA_CREATE_TOPICS: 'none'  # Specify no topics to be created
+
+
+

@@ -71,7 +71,7 @@ delete-customers:
 	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
 		 --bootstrap-server kafka:9092 \
 		 --delete \
-		 --topic my_prefix.inventory.customers
+		 --topic order-planning-service.topo-integration.pqr.v1
 
 describe-heartbeat:
 	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
@@ -79,11 +79,19 @@ describe-heartbeat:
 		 --describe \
 		 --topic __debezium-hearbeat.dbserver1
 
+create-topic:
+	docker exec -it kafka  /kafka/bin/kafka-topics.sh \
+		 --bootstrap-server kafka:9092 \
+		 --create \
+		  --replication-factor 1 \
+		  --partitions 1 \
+		  --topic order-planning-service.topo-integration.pqr.v1
+
 consume-customers:
 	docker exec -it kafka  /kafka/bin/kafka-console-consumer.sh \
 		 --bootstrap-server kafka:9092 \
 		 --from-beginning \
-		 --topic my_prefix.inventory.customers
+		 --topic order-planning-service.topo-integration.pqr.v1
 
 
 # Delete all Docker containers.

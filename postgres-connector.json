@@ -7,9 +7,16 @@
     "database.user": "myuser",
     "database.password": "mypassword",
     "database.dbname": "postgres",
-    "topic.prefix": "my_prefix",
+    "database.server.name": "postgres",
+    "topic.creation.enable": "false",
     "table.include.list": "inventory.customers",
-    "auto.create.topics.enable": false
+    "topic.prefix": "my-tes",
+    "topic.creation.default.replication.factor": 1,
+    "topic.creation.default.partitions": 1,
+    "transforms": "Reroute",
+    "transforms.Reroute.type": "io.debezium.transforms.ByLogicalTableRouter",
+    "transforms.Reroute.topic.regex": "(.*)customers(.*)",
+    "transforms.Reroute.topic.replacement": "order-planning-service.topo-integration.pqr.v1"
   }
 }
 
